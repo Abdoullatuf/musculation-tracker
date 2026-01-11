@@ -148,15 +148,33 @@ function initializeDefaultExercises() {
         // Rehab & Prehab specific
         { id: 'ex25', name: 'Eccentric Heel Drop', muscle: 'legs', equipment: 'bodyweight', type: 'isolation', restTime: 60, notes: 'Tendon Achille. Monter à 2 pieds, descendre sur 1 pied très lentement (3-5s).' },
         { id: 'ex26', name: 'Reverse Nordic Curl', muscle: 'legs', equipment: 'bodyweight', type: 'isolation', restTime: 90, notes: 'Droit Fémoral (Blessure frappe). Genoux au sol, descendre le torse en arrière en gardant les hanches verrouillées. Aller doucement.' },
-        { id: 'ex27', name: 'Bulgarian Split Squat', muscle: 'legs', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Stabilité hanche & genou. Descendre contrôlé.' }
+        { id: 'ex27', name: 'Bulgarian Split Squat', muscle: 'legs', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Stabilité hanche & genou. Descendre contrôlé.' },
+
+        // Ajouts (bibliothèque d’exercices)
+        { id: 'ex28', name: 'Incline Bench Press', muscle: 'chest', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Banc incliné ~15-30°. Omoplates serrées. Contrôle la descente.' },
+        { id: 'ex29', name: 'Assis Cable Row', muscle: 'back', equipment: 'cable', type: 'compound', restTime: 90, notes: 'Tirer les coudes vers les hanches. Épaules basses. Dos neutre.' },
+        { id: 'ex30', name: 'Dips', muscle: 'chest', equipment: 'bodyweight', type: 'compound', restTime: 120, notes: 'Léger buste penché pour pecs. Épaules stables. Amplitude contrôlée.' },
+        { id: 'ex31', name: 'Fentes de marche', muscle: 'legs', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Grand pas, genou arrière proche du sol. Tronc gainé. Alterné.' },
+        { id: 'ex32', name: 'Élévation des mollets debout', muscle: 'legs', equipment: 'machine', type: 'isolation', restTime: 60, notes: 'Amplitude maximale. Pause en haut. Descente contrôlée.' },
+        { id: 'ex33', name: 'Arnold Press', muscle: 'shoulders', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Rotation contrôlée. Éviter de cambrer. Monter sans élan.' },
+        { id: 'ex34', name: 'Hammer Curl', muscle: 'biceps', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Poignets neutres. Coudes fixes. Contrôle la descente.' },
+        { id: 'ex35', name: 'Extension des triceps au-dessus de la tête', muscle: 'triceps', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Coudes serrés. Étirement contrôlé. Monter sans balancer.' },
+        { id: 'ex36', name: 'Russian Twist', muscle: 'core', equipment: 'bodyweight', type: 'isolation', restTime: 60, notes: 'Rotation du buste (pas juste les bras). Gainage. Lent et propre.' },
+        { id: 'ex37', name: 'Glute Bridge', muscle: 'glutes', equipment: 'bodyweight', type: 'compound', restTime: 60, notes: 'Rétroversion du bassin. Pousser dans les talons. Contracter en haut.' }
     ];
 
     let hasChanges = false;
+    const normalizeName = (name) => (name || '').toString().trim().toLowerCase();
+    const existingIds = new Set(state.exercises.map(e => e?.id).filter(Boolean));
+    const existingNames = new Set(state.exercises.map(e => normalizeName(e?.name)));
+
     defaultExercises.forEach(defEx => {
-        if (!state.exercises.find(e => e.id === defEx.id)) {
-            state.exercises.push(defEx);
-            hasChanges = true;
-        }
+        const nameKey = normalizeName(defEx.name);
+        if (existingIds.has(defEx.id) || existingNames.has(nameKey)) return;
+        state.exercises.push(defEx);
+        existingIds.add(defEx.id);
+        existingNames.add(nameKey);
+        hasChanges = true;
     });
 
     if (hasChanges) {
