@@ -296,7 +296,61 @@ function adjustRestTime(seconds) { restTimeRemaining = Math.max(0, restTimeRemai
 function skipRest() { if (state.restTimer) clearInterval(state.restTimer); document.getElementById('restTimerOverlay').classList.add('hidden'); }
 function playNotificationSound() { try { const audioContext = new (window.AudioContext || window.webkitAudioContext)(); const oscillator = audioContext.createOscillator(); const gainNode = audioContext.createGain(); oscillator.connect(gainNode); gainNode.connect(audioContext.destination); oscillator.frequency.value = 800; oscillator.type = 'sine'; gainNode.gain.value = 0.3; oscillator.start(); setTimeout(() => oscillator.stop(), 200); } catch (e) { } }
 function cancelWorkout() { showConfirm('Annuler la séance ?', 'Les données seront perdues.', () => { if (state.workoutTimer) clearInterval(state.workoutTimer); if (state.restTimer) clearInterval(state.restTimer); state.currentWorkout = null; renderWorkoutPage(); }); }
-function finishWorkout() { if (!state.currentWorkout) return; const workout = { ...state.currentWorkout, duration: Math.floor((Date.now() - state.currentWorkout.startTime) / 1000), endTime: Date.now() }; workout.exercises.forEach(ex => { ex.sets.forEach(set => { if (set.completed && set.weight && set.reps) { const current = state.records[ex.exerciseId]; const weight = parseFloat(set.weight), reps = parseInt(set.reps); if (!current || weight > current.weight || (weight === current.weight && reps > current.reps)) { state.records[ex.exerciseId] = { weight, reps, date: workout.date }; } } }); }); state.workouts.push(workout); saveData(STORAGE_KEYS.WORKOUTS, state.workouts); saveData(STORAGE_KEYS.RECORDS, state.records); if (state.workoutTimer) clearInterval(state.workoutTimer); state.currentWorkout = null; showToast('Séance enregistrée ! 💪', 'success'); updateDashboard(); renderWorkoutPage(); }
+function finishWorkout() {
+    if (!state.currentWorkout) return;
+
+    // 1. Clôture de la séance
+    const workout = {
+        ...state.currentWorkout,
+        duration: Math.floor((Date.now() - state.currentWorkout.startTime) / 1000),
+        endTime: Date.now()
+    };
+
+    // 2. Mise à jour des records (PR)
+    workout.exercises.forEach(ex => {
+        ex.sets.forEach(set => {
+            if (set.completed && set.weight && set.reps) {
+                const current = state.records[ex.exerciseId];
+                const weight = parseFloat(set.weight);
+                const reps = parseInt(set.reps);
+                // Logique PR : Plus lourd OU (même poids ET plus de reps)
+                if (!current || weight > current.weight || (weight === current.weight && reps > current.reps)) {
+                    state.records[ex.exerciseId] = { weight, reps, date: workout.date };
+                    // Optionnel : Notification spécifique pour PR ?
+                    showToast(`Nouveau Record : ${weight}kg x ${reps}! 🏆`, 'success');
+                }
+            }
+        });
+    });
+
+    // 3. Sauvegarde
+    state.workouts.push(workout);
+    saveData(STORAGE_KEYS.WORKOUTS, state.workouts);
+    saveData(STORAGE_KEYS.RECORDS, state.records);
+
+    // 4. Nettoyage
+    if (state.workoutTimer) clearInterval(state.workoutTimer);
+    state.currentWorkout = null;
+
+    // 5. Mises à jour de l'interface (Synchronisation)
+    try {
+        updateDashboard();   // Met à jour les widgets accueil
+        renderHistory();    // Force le re-rendu de la liste historique
+        renderStats();      // Force le calcul des stats
+    } catch (e) {
+        console.error('Erreur mise à jour UI:', e);
+    }
+
+    showToast('Séance enregistrée avec succès ! 💪', 'success');
+
+    // 6. Redirection automatique vers l'historique pour valider visuellement
+    if (typeof navigateTo === 'function') {
+        navigateTo('history');
+    } else {
+        // Fallback si navigateTo n'est pas dispo
+        renderWorkoutPage();
+    }
+}
 function renderHistory() { const now = new Date(); const monthSelect = document.getElementById('historyMonth'); monthSelect.innerHTML = ''; for (let i = 0; i < 12; i++) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); const option = document.createElement('option'); option.value = `${d.getFullYear()}-${d.getMonth()}`; option.textContent = d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }); monthSelect.appendChild(option); } monthSelect.onchange = () => renderCalendarAndList(); renderCalendarAndList(); }
 function renderCalendarAndList() { const [year, month] = document.getElementById('historyMonth').value.split('-').map(Number); const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0); const today = new Date(); const workoutDates = new Set(state.workouts.filter(w => { const d = new Date(w.date); return d.getMonth() === month && d.getFullYear() === year; }).map(w => new Date(w.date).getDate())); const calendarView = document.getElementById('calendarView'); const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']; let calendarHTML = `<div class="calendar-grid">`; dayNames.forEach(d => calendarHTML += `<div class="calendar-day-header">${d}</div>`); for (let i = 0; i < firstDay.getDay(); i++) calendarHTML += `<div class="calendar-day"></div>`; for (let day = 1; day <= lastDay.getDate(); day++) { const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year; const hasWorkout = workoutDates.has(day); calendarHTML += `<div class="calendar-day ${isToday ? 'today' : ''} ${hasWorkout ? 'has-workout' : ''}">${day}</div>`; } calendarHTML += `</div>`; calendarView.innerHTML = calendarHTML; const monthWorkouts = state.workouts.filter(w => { const d = new Date(w.date); return d.getMonth() === month && d.getFullYear() === year; }).reverse(); const historyList = document.getElementById('historyList'); if (monthWorkouts.length === 0) { historyList.innerHTML = `<div class="empty-state"><span class="empty-icon">📅</span><p>Aucune séance ce mois-ci</p></div>`; return; } historyList.innerHTML = monthWorkouts.map(w => { const date = new Date(w.date); const volume = w.exercises.reduce((exTotal, ex) => exTotal + ex.sets.reduce((setTotal, s) => setTotal + (parseFloat(s.weight) || 0) * (parseInt(s.reps) || 0), 0), 0); return `<div class="workout-item"><div class="workout-item-icon">🏋️</div><div class="workout-item-content"><div class="workout-item-title">${w.name || 'Séance'}</div><div class="workout-item-meta">${date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric' })} • ${w.exercises.length} exercices</div></div><div class="workout-item-stats"><span>${formatWeight(volume)}</span><small>${Math.round((w.duration || 0) / 60)} min</small></div></div>`; }).join(''); }
 let muscleChart = null;
@@ -307,7 +361,7 @@ function closeSettings() { document.getElementById('settingsModal').classList.ad
 function setTheme(theme) { state.settings.theme = theme; applyTheme(theme); saveData(STORAGE_KEYS.SETTINGS, state.settings); document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === theme)); }
 function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); }
 function exportData() { const data = { exercises: state.exercises, programs: state.programs, workouts: state.workouts, records: state.records, settings: state.settings, nutrition: state.nutrition, exportDate: new Date().toISOString() }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `muscltrack-backup-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url); showToast('Données exportées ✓', 'success'); }
-function importData(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { try { const data = JSON.parse(event.target.result); if (data.exercises) { state.exercises = data.exercises; saveData(STORAGE_KEYS.EXERCISES, state.exercises); try { if (typeof initializeDefaultExercises === 'function') initializeDefaultExercises(); } catch (_) {} } if (data.programs) { state.programs = data.programs; saveData(STORAGE_KEYS.PROGRAMS, state.programs); } if (data.workouts) { state.workouts = data.workouts; saveData(STORAGE_KEYS.WORKOUTS, state.workouts); } if (data.records) { state.records = data.records; saveData(STORAGE_KEYS.RECORDS, state.records); } if (data.settings) { state.settings = { ...state.settings, ...data.settings }; saveData(STORAGE_KEYS.SETTINGS, state.settings); } if (data.nutrition) { state.nutrition = { ...state.nutrition, ...data.nutrition }; saveData('muscltrack_nutrition', state.nutrition); } updateDashboard(); renderExercises(); renderPrograms(); try { if (typeof populateProgressExerciseSelect === 'function') populateProgressExerciseSelect(); } catch (_) {} showToast('Données importées ✓', 'success'); } catch (err) { showToast('Erreur d\'importation', 'error'); } }; reader.readAsText(file); e.target.value = ''; }
+function importData(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { try { const data = JSON.parse(event.target.result); if (data.exercises) { state.exercises = data.exercises; saveData(STORAGE_KEYS.EXERCISES, state.exercises); try { if (typeof initializeDefaultExercises === 'function') initializeDefaultExercises(); } catch (_) { } } if (data.programs) { state.programs = data.programs; saveData(STORAGE_KEYS.PROGRAMS, state.programs); } if (data.workouts) { state.workouts = data.workouts; saveData(STORAGE_KEYS.WORKOUTS, state.workouts); } if (data.records) { state.records = data.records; saveData(STORAGE_KEYS.RECORDS, state.records); } if (data.settings) { state.settings = { ...state.settings, ...data.settings }; saveData(STORAGE_KEYS.SETTINGS, state.settings); } if (data.nutrition) { state.nutrition = { ...state.nutrition, ...data.nutrition }; saveData('muscltrack_nutrition', state.nutrition); } updateDashboard(); renderExercises(); renderPrograms(); try { if (typeof populateProgressExerciseSelect === 'function') populateProgressExerciseSelect(); } catch (_) { } showToast('Données importées ✓', 'success'); } catch (err) { showToast('Erreur d\'importation', 'error'); } }; reader.readAsText(file); e.target.value = ''; }
 function confirmClearData() { showConfirm('Effacer toutes les données ?', 'Cette action est irréversible !', () => { localStorage.clear(); location.reload(); }); }
 function formatWeight(value) { return value >= 1000 ? `${(value / 1000).toFixed(1)}t` : `${Math.round(value)} ${state.settings.weightUnit}`; }
 function showToast(message, type = 'success') { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '✕' : '⚠'}</span><span>${message}</span>`; container.appendChild(toast); setTimeout(() => { toast.style.animation = 'toastIn 0.3s ease reverse'; setTimeout(() => toast.remove(), 300); }, 3000); }

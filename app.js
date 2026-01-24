@@ -121,65 +121,70 @@ function saveData(key, data) {
 
 function initializeDefaultExercises() {
     const defaultExercises = [
-        { id: 'ex1', name: 'Back Squat', muscle: 'legs', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Équilibre sur le milieu du pied. Genoux alignés. Dos neutre.' },
-        { id: 'ex2', name: 'Front Squat', muscle: 'legs', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Torso plus vertical, emphasis quads.' },
-        { id: 'ex3', name: 'Romanian Deadlift', muscle: 'legs', equipment: 'barbell', type: 'compound', restTime: 90, notes: 'Genoux légèrement fléchis. Dos plat. Charnier à la hanche.' },
-        { id: 'ex4', name: 'Conventional Deadlift', muscle: 'back', equipment: 'barbell', type: 'compound', restTime: 180, notes: 'Bar au-dessus milieu du pied. Épaules au-dessus de la bar.' },
+        { id: 'ex1', name: 'Squat Arrière', muscle: 'legs', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Équilibre sur le milieu du pied. Genoux alignés. Dos neutre.' },
+        { id: 'ex2', name: 'Squat Avant', muscle: 'legs', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Torso plus vertical, emphasis quads.' },
+        { id: 'ex3', name: 'Soulevé de Terre Roumain', muscle: 'legs', equipment: 'barbell', type: 'compound', restTime: 90, notes: 'Genoux légèrement fléchis. Dos plat. Charnier à la hanche.' },
+        { id: 'ex4', name: 'Soulevé de Terre Classique', muscle: 'back', equipment: 'barbell', type: 'compound', restTime: 180, notes: 'Barre au-dessus milieu du pied. Épaules au-dessus de la barre.' },
         { id: 'ex5', name: 'Hip Thrust', muscle: 'glutes', equipment: 'barbell', type: 'compound', restTime: 90, notes: 'Omoplates en appui. Serrer fessiers au sommet.' },
-        { id: 'ex6', name: 'Bench Press', muscle: 'chest', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Omoplates ramenées en arrière. Bar au milieu poitrine.' },
-        { id: 'ex7', name: 'Dumbbell Bench Press', muscle: 'chest', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Amplitude complète. Coudes 45-75°.' },
-        { id: 'ex8', name: 'Overhead Press', muscle: 'shoulders', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Core engagé. Barre passe près du visage.' },
-        { id: 'ex9', name: 'Dumbbell Shoulder Press', muscle: 'shoulders', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Position assise ou debout.' },
-        { id: 'ex10', name: 'Barbell Row', muscle: 'back', equipment: 'barbell', type: 'compound', restTime: 90, notes: 'Colonne neutre. Coudes vers les côtes.' },
-        { id: 'ex11', name: 'Pull-Up', muscle: 'back', equipment: 'bodyweight', type: 'compound', restTime: 120, notes: 'Poitrine vers la barre. Amplitude complète.' },
-        { id: 'ex12', name: 'Lat Pulldown', muscle: 'back', equipment: 'cable', type: 'compound', restTime: 90, notes: 'Tirer vers la poitrine, pas le menton.' },
-        { id: 'ex13', name: 'Dumbbell Row', muscle: 'back', equipment: 'dumbbell', type: 'compound', restTime: 60, notes: 'Un bras à la fois. Rotation minimale du torse.' },
-        { id: 'ex14', name: 'Leg Press', muscle: 'legs', equipment: 'machine', type: 'compound', restTime: 90, notes: 'Pieds largeur épaules. Genoux ne rentrent pas.' },
-        { id: 'ex15', name: 'Leg Curl', muscle: 'legs', equipment: 'machine', type: 'isolation', restTime: 60, notes: 'Ischio-jambiers isolés.' },
-        { id: 'ex16', name: 'Leg Extension', muscle: 'legs', equipment: 'machine', type: 'isolation', restTime: 60, notes: 'Quadriceps isolés. Contrôle la descente.' },
+        { id: 'ex6', name: 'Développé Couché', muscle: 'chest', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Omoplates ramenées en arrière. Barre au milieu poitrine.' },
+        { id: 'ex7', name: 'Développé Couché Haltères', muscle: 'chest', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Amplitude complète. Coudes 45-75°.' },
+        { id: 'ex8', name: 'Développé Militaire', muscle: 'shoulders', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Core engagé. Barre passe près du visage.' },
+        { id: 'ex9', name: 'Développé Épaules Haltères', muscle: 'shoulders', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Position assise ou debout.' },
+        { id: 'ex10', name: 'Rowing Barre', muscle: 'back', equipment: 'barbell', type: 'compound', restTime: 90, notes: 'Colonne neutre. Coudes vers les côtes.' },
+        { id: 'ex11', name: 'Tractions', muscle: 'back', equipment: 'bodyweight', type: 'compound', restTime: 120, notes: 'Poitrine vers la barre. Amplitude complète.' },
+        { id: 'ex12', name: 'Tirage Vertical (Poulie)', muscle: 'back', equipment: 'cable', type: 'compound', restTime: 90, notes: 'Tirer vers la poitrine, pas le menton.' },
+        { id: 'ex13', name: 'Rowing Haltère (Bûcheron)', muscle: 'back', equipment: 'dumbbell', type: 'compound', restTime: 60, notes: 'Un bras à la fois. Rotation minimale du torse.' },
+        { id: 'ex14', name: 'Presse à Cuisses', muscle: 'legs', equipment: 'machine', type: 'compound', restTime: 90, notes: 'Pieds largeur épaules. Genoux ne rentrent pas.' },
+        { id: 'ex15', name: 'Leg Curl (Ischios)', muscle: 'legs', equipment: 'machine', type: 'isolation', restTime: 60, notes: 'Ischio-jambiers isolés.' },
+        { id: 'ex16', name: 'Leg Extension (Quads)', muscle: 'legs', equipment: 'machine', type: 'isolation', restTime: 60, notes: 'Quadriceps isolés. Contrôle la descente.' },
         { id: 'ex17', name: 'Face Pull', muscle: 'shoulders', equipment: 'cable', type: 'isolation', restTime: 60, notes: 'Arrière épaules. Rotation externe.' },
-        { id: 'ex18', name: 'Lateral Raise', muscle: 'shoulders', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Deltoïdes latéraux. Léger coude fléchi.' },
-        { id: 'ex19', name: 'Bicep Curl', muscle: 'biceps', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Coudes fixes. Contraction complète.' },
-        { id: 'ex20', name: 'Tricep Pushdown', muscle: 'triceps', equipment: 'cable', type: 'isolation', restTime: 60, notes: 'Coudes collés au corps.' },
-        { id: 'ex21', name: 'Cable Crunch', muscle: 'core', equipment: 'cable', type: 'isolation', restTime: 60, notes: 'Flexion de la colonne. Contraction abdos.' },
-        { id: 'ex22', name: 'Hanging Knee Raise', muscle: 'core', equipment: 'bodyweight', type: 'isolation', restTime: 60, notes: 'Sans balancement. Contrôle.' },
-        { id: 'ex23', name: 'Plank', muscle: 'core', equipment: 'bodyweight', type: 'isolation', restTime: 60, notes: 'Corps aligné. Abdos engagés.' },
-        { id: 'ex24', name: 'Push-Up', muscle: 'chest', equipment: 'bodyweight', type: 'compound', restTime: 60, notes: 'Corps aligné. Amplitude complète.' },
+        { id: 'ex18', name: 'Élévations Latérales', muscle: 'shoulders', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Deltoïdes latéraux. Léger coude fléchi.' },
+        { id: 'ex19', name: 'Curl Biceps', muscle: 'biceps', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Coudes fixes. Contraction complète.' },
+        { id: 'ex20', name: 'Extension Triceps (Poulie)', muscle: 'triceps', equipment: 'cable', type: 'isolation', restTime: 60, notes: 'Coudes collés au corps.' },
+        { id: 'ex21', name: 'Crunch Poulie', muscle: 'core', equipment: 'cable', type: 'isolation', restTime: 60, notes: 'Flexion de la colonne. Contraction abdos.' },
+        { id: 'ex22', name: 'Relevé de Genoux', muscle: 'core', equipment: 'bodyweight', type: 'isolation', restTime: 60, notes: 'Sans balancement. Contrôle.' },
+        { id: 'ex23', name: 'Gainage (Planche)', muscle: 'core', equipment: 'bodyweight', type: 'isolation', restTime: 60, notes: 'Corps aligné. Abdos engagés.' },
+        { id: 'ex24', name: 'Pompes', muscle: 'chest', equipment: 'bodyweight', type: 'compound', restTime: 60, notes: 'Corps aligné. Amplitude complète.' },
         // Rehab & Prehab specific
-        { id: 'ex25', name: 'Eccentric Heel Drop', muscle: 'legs', equipment: 'bodyweight', type: 'isolation', restTime: 60, notes: 'Tendon Achille. Monter à 2 pieds, descendre sur 1 pied très lentement (3-5s).' },
+        { id: 'ex25', name: 'Extension Mollet Excentrique', muscle: 'legs', equipment: 'bodyweight', type: 'isolation', restTime: 60, notes: 'Tendon Achille. Monter à 2 pieds, descendre sur 1 pied très lentement (3-5s).' },
         { id: 'ex26', name: 'Reverse Nordic Curl', muscle: 'legs', equipment: 'bodyweight', type: 'isolation', restTime: 90, notes: 'Droit Fémoral (Blessure frappe). Genoux au sol, descendre le torse en arrière en gardant les hanches verrouillées. Aller doucement.' },
-        { id: 'ex27', name: 'Bulgarian Split Squat', muscle: 'legs', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Stabilité hanche & genou. Descendre contrôlé.' },
+        { id: 'ex27', name: 'Fentes Bulgares', muscle: 'legs', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Stabilité hanche & genou. Descendre contrôlé.' },
 
         // Ajouts (bibliothèque d’exercices)
-        { id: 'ex28', name: 'Incline Bench Press', muscle: 'chest', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Banc incliné ~15-30°. Omoplates serrées. Contrôle la descente.' },
-        { id: 'ex29', name: 'Assis Cable Row', muscle: 'back', equipment: 'cable', type: 'compound', restTime: 90, notes: 'Tirer les coudes vers les hanches. Épaules basses. Dos neutre.' },
+        { id: 'ex28', name: 'Développé Incliné', muscle: 'chest', equipment: 'barbell', type: 'compound', restTime: 120, notes: 'Banc incliné ~15-30°. Omoplates serrées. Contrôle la descente.' },
+        { id: 'ex29', name: 'Tirage Horizontal', muscle: 'back', equipment: 'cable', type: 'compound', restTime: 90, notes: 'Tirer les coudes vers les hanches. Épaules basses. Dos neutre.' },
         { id: 'ex30', name: 'Dips', muscle: 'chest', equipment: 'bodyweight', type: 'compound', restTime: 120, notes: 'Léger buste penché pour pecs. Épaules stables. Amplitude contrôlée.' },
-        { id: 'ex31', name: 'Fentes de marche', muscle: 'legs', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Grand pas, genou arrière proche du sol. Tronc gainé. Alterné.' },
-        { id: 'ex32', name: 'Élévation des mollets debout', muscle: 'legs', equipment: 'machine', type: 'isolation', restTime: 60, notes: 'Amplitude maximale. Pause en haut. Descente contrôlée.' },
-        { id: 'ex33', name: 'Arnold Press', muscle: 'shoulders', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Rotation contrôlée. Éviter de cambrer. Monter sans élan.' },
-        { id: 'ex34', name: 'Hammer Curl', muscle: 'biceps', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Poignets neutres. Coudes fixes. Contrôle la descente.' },
-        { id: 'ex35', name: 'Extension des triceps au-dessus de la tête', muscle: 'triceps', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Coudes serrés. Étirement contrôlé. Monter sans balancer.' },
+        { id: 'ex31', name: 'Fentes Marchées', muscle: 'legs', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Grand pas, genou arrière proche du sol. Tronc gainé. Alterné.' },
+        { id: 'ex32', name: 'Extension Mollets Debout', muscle: 'legs', equipment: 'machine', type: 'isolation', restTime: 60, notes: 'Amplitude maximale. Pause en haut. Descente contrôlée.' },
+        { id: 'ex33', name: 'Développé Arnold', muscle: 'shoulders', equipment: 'dumbbell', type: 'compound', restTime: 90, notes: 'Rotation contrôlée. Éviter de cambrer. Monter sans élan.' },
+        { id: 'ex34', name: 'Curl Marteau', muscle: 'biceps', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Poignets neutres. Coudes fixes. Contrôle la descente.' },
+        { id: 'ex35', name: 'Extension Triceps Nuque', muscle: 'triceps', equipment: 'dumbbell', type: 'isolation', restTime: 60, notes: 'Coudes serrés. Étirement contrôlé. Monter sans balancer.' },
         { id: 'ex36', name: 'Russian Twist', muscle: 'core', equipment: 'bodyweight', type: 'isolation', restTime: 60, notes: 'Rotation du buste (pas juste les bras). Gainage. Lent et propre.' },
-        { id: 'ex37', name: 'Glute Bridge', muscle: 'glutes', equipment: 'bodyweight', type: 'compound', restTime: 60, notes: 'Rétroversion du bassin. Pousser dans les talons. Contracter en haut.' }
+        { id: 'ex37', name: 'Pont Fessier', muscle: 'glutes', equipment: 'bodyweight', type: 'compound', restTime: 60, notes: 'Rétroversion du bassin. Pousser dans les talons. Contracter en haut.' }
     ];
 
     let hasChanges = false;
-    const normalizeName = (name) => (name || '').toString().trim().toLowerCase();
-    const existingIds = new Set(state.exercises.map(e => e?.id).filter(Boolean));
-    const existingNames = new Set(state.exercises.map(e => normalizeName(e?.name)));
 
     defaultExercises.forEach(defEx => {
-        const nameKey = normalizeName(defEx.name);
-        if (existingIds.has(defEx.id) || existingNames.has(nameKey)) return;
-        state.exercises.push(defEx);
-        existingIds.add(defEx.id);
-        existingNames.add(nameKey);
-        hasChanges = true;
+        const index = state.exercises.findIndex(e => e.id === defEx.id);
+        if (index !== -1) {
+            // Force Update pour la traduction (Si l'utilisateur ne l'a pas fait lui-même ?)
+            // Ici on force le nom français car c'est la demande de l'utilisateur
+            if (state.exercises[index].name !== defEx.name) {
+                state.exercises[index].name = defEx.name;
+                state.exercises[index].notes = defEx.notes; // Met à jour la note aussi au cas où
+                hasChanges = true;
+            }
+        } else {
+            // Ajout si manquant
+            state.exercises.push(defEx);
+            hasChanges = true;
+        }
     });
 
     if (hasChanges) {
         saveData(STORAGE_KEYS.EXERCISES, state.exercises);
-        console.log('Nouveaux exercices ajoutés par défaut');
+        console.log('Exercices mis à jour (Traduction FR)');
     }
 }
 

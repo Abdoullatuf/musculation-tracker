@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nTranslate exercise names to French and improve workout completion\n\n- Translate all default exercise names to French \\(Squat Arrière, Développé Couché, etc.\\)\n- Update exercise initialization to force French names on existing exercises\n- Improve finishWorkout\\(\\) with PR notification toasts\n- Add automatic redirect to history page after workout completion\n- Sync UI updates \\(dashboard, history, stats\\) on workout finish\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
